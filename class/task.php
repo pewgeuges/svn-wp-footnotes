@@ -1,4 +1,47 @@
 <?php
+/*
+Plugin Name:    Footnotes
+Plugin URI:     https://wordpress.org/plugins/footnotes/
+Description:    footnotes aims to be the all-in-one solution for displaying an automatically generated list of references on your Page or Post. The Plugin ships with a set of sane defaults but also gives the user control over how their footnotes are being displayed. footnotes gives you the ability to display decently-formated footnotes on your WordPress Pages or Posts.
+Author:         Mark Cheret
+Author URI:     https://cheret.de/plugins/footnotes-2/
+Text Domain:    footnotes
+Domain Path:    /languages
+Version:        2019
+License:        GPL3
+
+Customization:  2020-06-23T0613+0200 (custom styles, fixed print output [child theme])
+Customization:  2020-09-09T2140+0200 (raised scroll level, shorter scroll time [reference-container.html])
+Customization:  2020-09-09T2140+0200 (parameters off dashboard [tooltip.html])
+Debugging:      2020-09-09T2140+0200 (fixed missing or wrong links l. 412)
+Usability:      2020-09-09T2140+0200 (voided $a_str_Prefix l. 544)
+Usability:      2020-09-09T2140+0200 (added line breaks l. 524..)
+Translation:    2020-09-10T2104+0200 (fix infobox text and missing setting l. 412)
+Last modified:  2020-09-10T2106+0200
+*/
+
+/*  Copyright 2019  Mark Cheret  (mark@cheret.de)
+
+Contributor:               David Artiss (@dartiss)
+Includes code authored by: Stefan Herndler (@aricura)
+
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as 
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+defined( 'ABSPATH' ) or die( nl2br( "\r\n\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;en:&nbsp;&nbsp;&nbsp;&nbsp;This PHP file cannot be displayed in the browser.\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For a quick look, please open this content as a plain text file if there is any with the same name.\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You may also wish to download the target and open the file in a text editor.\r\n\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;Ce fichier ne peut pas s'afficher dans le navigateur.\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pour un aperçu du contenu, ouvrez s.v.p. le fichier texte de même nom s’il existe.\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vous pouvez aussi télécharger la cible du lien et ouvrir le fichier dans votre éditeur de texte." ) );
+
 /**
  * Includes the core function of the Plugin - Search and Replace the Footnotes.
  *
@@ -367,7 +410,7 @@ class MCI_Footnotes_Task {
                     if (is_int($l_int_MaxLength) && strlen($l_str_DummyText) > $l_int_MaxLength) {
                         $l_str_ExcerptText = substr($l_str_DummyText, 0, $l_int_MaxLength);
                         $l_str_ExcerptText = substr($l_str_ExcerptText, 0, strrpos($l_str_ExcerptText, ' '));
-                        $l_str_ExcerptText .= " ..." . sprintf(__("%scontinue%s", MCI_Footnotes_Config::C_STR_PLUGIN_NAME), '<a href="" onclick="footnote_moveToAnchor(\'footnote_plugin_reference_'.$l_str_Index.'\');">', '</a>');
+                        $l_str_ExcerptText .= '&nbsp;&#x2026; <a class="continue" href="#footnote_plugin_reference_' . self::$a_str_Prefix.$l_str_Index . '" onclick="footnote_moveToAnchor(\'footnote_plugin_reference_' . self::$a_str_Prefix . $l_str_Index . '\');">lire&nbsp;plus</a>';
                     }
                 }
 
@@ -410,6 +453,7 @@ class MCI_Footnotes_Task {
 			}
 			// add offset to the new starting position
 			$l_int_PosStart += $l_int_Length + strlen($l_str_EndingTag);
+			$l_int_PosStart = $l_int_Length + strlen($l_str_FootnoteReplaceText);
 		} while (true);
 
 		// return content
@@ -478,7 +522,9 @@ class MCI_Footnotes_Task {
 					"text" => $l_str_FootnoteText
 				)
 			);
-			$l_str_Body .= $l_obj_Template->getContent();
+			$footnote_item_temp = $l_obj_Template->getContent();
+			$footnote_item_temp .= "\r\n\r\n";
+			$l_str_Body .= $footnote_item_temp;
 			$l_obj_Template->reload();
 		}
 
@@ -496,7 +542,7 @@ class MCI_Footnotes_Task {
 
 		// free all found footnotes if reference container will be displayed
 		self::$a_arr_Footnotes = array();
-		self::$a_str_Prefix = rand(1000, 9999) . "_";
+		//self::$a_str_Prefix = rand(1000, 9999) . "_";
 		return $l_obj_TemplateContainer->getContent();
 	}
 }
