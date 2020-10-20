@@ -90,3 +90,10 @@
 	width: 99%;
 	text-align: left;
 }
+
+/* prevent Footnote plugin tooltip content from showing up in PDF */
+@media print {
+	.footnote_tooltip {
+		display:none;
+	}
+}
